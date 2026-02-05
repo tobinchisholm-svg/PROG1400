@@ -1,0 +1,106 @@
+---
+config:
+  layout: elk
+---
+classDiagram
+    direction LR
+    class Position {
+        +x: int
+        +y: int
+        +equals(other: Position): bool
+        +add(dx: int, dy: int): Position
+    }
+
+    class Direction {
+        <<enum>>
+        UP
+        DOWN
+        LEFT
+        RIGHT
+    }
+    class GameWorld {
+        -width: int
+        -height: int
+        -gridSize: int
+        -entities: List~Entity~
+        -snake: Snake
+        -appleSpawner: AppleSpawner
+        -gameOver: bool
+        +start(): void
+        +update(): void
+        +reset(): void
+        +isInside(pos: Position): bool
+        +isOccupied(pos: Position): bool
+        +getFreeCells(): List~Position~
+        +endGame(): void
+    }
+    class Player {
+        +name: string
+        +score: int
+        +currentDirection: Direction
+        +setDirection(dir: Direction): void
+        +addScore(points: int): void
+        +reset(): void
+    }
+    class Entity {
+        <<abstract>>
+        +id: string
+        +position: Position
+        +blocksMovement: bool
+        +update(world: GameWorld): void
+        +onCollide(world: GameWorld, other: Entity): void
+    }
+    class BorderWall {
+        <<extends Entity>>
+    }
+
+    class Apple {
+        <<extends Entity>>
+        +value: int
+    }
+    class Snake {
+        -head: SnakeHead
+        -segments: List~SnakeSegment~
+        -pendingGrowth: int
+        +getHead(): SnakeHead
+        +occupies(pos: Position): bool
+        +getNextHeadPos(dir: Direction): Position
+        +move(world: GameWorld): void
+        +grow(amount: int): void
+        +reset(start: Position): void
+    }
+
+    class SnakeHead {
+        <<extends Entity>>
+        +direction: Direction
+        +setDirection(dir: Direction): void
+    }
+
+    class SnakeSegment {
+        <<extends Entity>>
+    }
+    class AppleSpawner {
+        -seed: int
+        +getValidSpawnPositions(world: GameWorld): List~Position~
+        +spawn(world: GameWorld): Apple
+    }
+    Apple --|> Entity
+    BorderWall --|> Entity
+    SnakeHead --|> Entity
+    SnakeSegment --|> Entity
+    GameWorld "1" *-- "1" Snake : owns
+    GameWorld "1" *-- "many" Entity : manages
+    Snake "1" *-- "1" SnakeHead : has
+    Snake "1" *-- "0..*" SnakeSegment : tail
+    Entity "1" *-- "1" Position : position
+    Snake ..> Position : compute next cell
+    GameWorld ..> Position : bounds/occupancy
+    AppleSpawner ..> Position : spawn positions
+    Player --> Direction : currentDirection
+    SnakeHead o-- Direction : direction
+    Player "1" --> "1" SnakeHead : controls
+    Player "1" --> "1" GameWorld : score managed
+    note for Player "Moves 1 cell per tick; no diagonal; no 180° reverse"
+    note for GameWorld "Square grid with impassable border walls; game over on collision"
+    note for AppleSpawner "Spawns only inside bounds; not on snake or walls"
+    note for Snake "Apple -> +score & growth; hitting wall/tail -> game over"
