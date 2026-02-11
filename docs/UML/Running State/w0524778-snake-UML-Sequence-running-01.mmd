@@ -1,0 +1,50 @@
+sequenceDiagram
+    autonumber
+
+    participant GameController
+    participant InputHandler
+    participant SnakeHead
+    participant SnakeBody as SnakeTail/Body
+    participant Apple
+    participant Grid as Grid/TileMap
+    participant Score as ScoreSystem
+
+    Note over GameController: Game loop tick begins
+
+    GameController -> InputHandler: getDirection()
+    InputHandler --> GameController: direction
+
+    GameController -> SnakeHead: setDirection(direction)
+
+    GameController -> SnakeHead: getNextHeadPos()
+    SnakeHead --> GameController: nextPosition
+
+    GameController -> Grid: isInside(nextPosition)?
+    Grid --> GameController: true/false
+
+    alt nextPosition outside grid
+        GameController -> GameController: end game
+        Note over GameController: Game Over
+    end
+
+    GameController -> SnakeBody: occupies(nextPosition)?
+    SnakeBody --> GameController: true/false
+
+    alt collision with tail
+        GameController -> GameController: end game
+        Note over GameController: Game Over
+    end
+
+    GameController -> Apple: isAppleAt(nextPosition)?
+    Apple --> GameController: true/false
+
+    alt apple collected
+        GameController -> SnakeBody: grow()
+        GameController -> Score: addPoints()
+        GameController -> Apple: spawnNewApple()
+    end
+    
+    
+        GameController -> SnakeHead: moveTo(nextPosition)
+        GameController -> SnakeBody: followHead()
+

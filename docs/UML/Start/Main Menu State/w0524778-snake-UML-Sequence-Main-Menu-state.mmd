@@ -1,0 +1,24 @@
+sequenceDiagram
+    autonumber
+
+    participant GameController
+    participant MenuUI as Menu UI
+    participant InputHandler
+
+    Note over GameController: Game starts in Menu State
+
+    GameController -> MenuUI: displayMenu()
+
+    loop waiting for input
+        GameController -> InputHandler: checkForInput()
+        InputHandler --> GameController: userChoice
+    end
+
+    alt user selects "Start Game"
+        GameController -> GameController: changeState(RUNNING)
+        Note over GameController: Game transitions to Running state
+    else user selects "Exit"
+        GameController -> GameController: quitGame()
+    else other options
+        GameController -> MenuUI: showOptionScreen()
+    end

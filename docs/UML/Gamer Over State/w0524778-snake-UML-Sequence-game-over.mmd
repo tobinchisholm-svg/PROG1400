@@ -1,0 +1,29 @@
+sequenceDiagram
+    autonumber
+
+    participant GameController
+    participant GameOverUI as Game Over UI
+    participant InputHandler
+    participant Score as Score System
+    participant SnakeHead
+    participant SnakeTail
+    participant Apple
+    participant Grid as Grid/TileMap
+
+    Note over GameController: Game Over<br>All gameplay stopped
+
+    GameController -> GameOverUI: displayGameOverScreen()
+    GameController -> Score: showFinalScore()
+
+    loop waiting for input
+        GameController -> InputHandler: checkForInput()
+        InputHandler --> GameController: userChoice
+    end
+
+    alt user selects "Restart"
+        GameController -> GameController: resetGame()
+        GameController -> GameController: changeState(RUNNING)
+        Note over GameController: Game restarts
+    else user selects "Main Menu"
+        GameController -> GameController: changeState(MENU)
+    end
