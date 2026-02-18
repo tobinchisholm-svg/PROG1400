@@ -1,0 +1,16 @@
+stateDiagram-v2
+    [*] --> MENU : startGame()
+
+    MENU --> PLAYING : startSelected()
+
+    PLAYING --> PAUSED : pausePressed()
+    PAUSED --> PLAYING : pausePressed()
+
+    PLAYING --> FOOD_EATEN : ateApple()
+    FOOD_EATEN --> PLAYING : growSnake()+spawnApple()+updateScore()
+
+    PLAYING --> GAME_OVER : collidedWithWallOrSelf()
+
+    GAME_OVER --> MENU : restart()
+
+    MENU --> [*] : exitGame()
