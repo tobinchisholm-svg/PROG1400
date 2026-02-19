@@ -84,20 +84,34 @@ class TileMap:
 
 # ----------------- Classic Snake Board: 20x20, border walls only -----------------
 if __name__ == "__main__":
+# Make a fully empty board (20x20)
     rows, cols = 20, 20
 
-    # Make a fully empty board
-    grid: List[List[TileType]] = [
-        [TileType.EMPTY for _ in range(cols)]
-        for _ in range(rows)
-    ]
+    grid = []   # this will become a list of rows
 
+    for r in range(rows):           # go through each row
+        row = []                    # start a new empty row
+        for c in range(cols):       # go through each column
+            row.append(TileType.EMPTY)   # put an EMPTY tile in this cell
+        grid.append(row)            # add the completed row to the grid
+    print(grid)
     # Add BORDER walls only
+ # Add BORDER walls only (beginner‑friendly version)
+
+# Top row
     for c in range(cols):
         grid[0][c] = TileType.WALL
+
+    # Bottom row
+    for c in range(cols):
         grid[rows - 1][c] = TileType.WALL
+
+    # Left column
     for r in range(rows):
         grid[r][0] = TileType.WALL
+
+    # Right column
+    for r in range(rows):
         grid[r][cols - 1] = TileType.WALL
 
     # Random apple placement (inside empty area)
